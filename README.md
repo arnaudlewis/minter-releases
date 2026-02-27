@@ -18,11 +18,39 @@ brew install arnaudlewis/tap/minter
 
 This installs both `minter` (CLI) and `minter-mcp` (MCP server).
 
+### Shell (Linux)
+
+```bash
+curl -fsSL https://github.com/arnaudlewis/minter-releases/releases/latest/download/minter-$(curl -fsSL https://api.github.com/repos/arnaudlewis/minter-releases/releases/latest | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4)-$(uname -m | sed 's/x86_64/x86_64-unknown-linux-gnu/' | sed 's/aarch64/aarch64-unknown-linux-gnu/').tar.gz | tar xz -C /tmp && sudo install /tmp/minter /tmp/minter-mcp /usr/local/bin/
+```
+
+Or step by step:
+
+```bash
+# 1. Pick your architecture
+ARCH=$(uname -m)  # x86_64 or aarch64
+
+# 2. Get the latest version tag
+TAG=$(curl -fsSL https://api.github.com/repos/arnaudlewis/minter-releases/releases/latest | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4)
+
+# 3. Map to Rust target
+case "$ARCH" in
+  x86_64)  TARGET="x86_64-unknown-linux-gnu" ;;
+  aarch64) TARGET="aarch64-unknown-linux-gnu" ;;
+esac
+
+# 4. Download and extract
+curl -fsSL "https://github.com/arnaudlewis/minter-releases/releases/download/${TAG}/minter-${TAG}-${TARGET}.tar.gz" | tar xz -C /tmp
+
+# 5. Install
+sudo install /tmp/minter /tmp/minter-mcp /usr/local/bin/
+```
+
 ### Manual download
 
 Download the archive for your platform from the [latest release](https://github.com/arnaudlewis/minter-releases/releases/latest), extract it, and place `minter` and `minter-mcp` on your `PATH`.
 
-Verify the installation:
+### Verify
 
 ```bash
 minter --version
