@@ -20,13 +20,13 @@ This installs both `minter` (CLI) and `minter-mcp` (MCP server for AI agents).
 
 ## Setup MCP for Claude Code
 
-Once installed, add minter to your Claude Code configuration:
-
 ```bash
 claude mcp add minter minter-mcp
 ```
 
-This gives Claude access to minter's tools: validate, inspect, scaffold, format, graph, and a built-in authoring guide. Claude can then validate specs inline, scaffold new files, and explore your dependency graph without leaving the conversation.
+The MCP server embeds the spec-driven methodology directly into your AI agent's workflow. It includes a built-in authoring guide that teaches agents how to think in behaviors, structure NFR constraints, and follow the one-primitive philosophy — so every spec an agent writes follows the same rigor as one you'd write yourself.
+
+Tools available to the agent: validate, inspect, scaffold, format, graph, initialize project, and methodology guide.
 
 ## Getting started
 
