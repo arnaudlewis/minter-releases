@@ -1,3 +1,8 @@
+[![Latest Release](https://img.shields.io/github/v/release/arnaudlewis/minter-releases?label=version&color=blue)](https://github.com/arnaudlewis/minter-releases/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/arnaudlewis/minter-releases/total?color=green)](https://github.com/arnaudlewis/minter-releases/releases)
+[![Homebrew](https://img.shields.io/badge/homebrew-arnaudlewis%2Ftap%2Fminter-orange)](https://github.com/arnaudlewis/homebrew-tap)
+![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
+
 # minter
 
 The deterministic validation gate for spec-driven development.
@@ -114,6 +119,10 @@ Download the archive for your platform from the [latest release](https://github.
 Each archive contains: `minter`, `minter-mcp`, `LICENSE`, and `README.md`. SHA-256 checksums are in `SHA256SUMS.txt`.
 
 </details>
+
+## Changelog
+
+See [Releases](https://github.com/arnaudlewis/minter-releases/releases) for version history and changelogs.
 
 ## License
 
