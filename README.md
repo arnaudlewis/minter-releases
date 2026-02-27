@@ -2,7 +2,9 @@
 
 The deterministic validation gate for spec-driven development.
 
-Minter parses a custom `.spec` DSL that defines behavioral contracts (given/when/then) and a `.nfr` DSL that defines non-functional requirements as measurable constraints. It enforces semantic rules, resolves dependency graphs, cross-validates NFR references, and provides watch mode for instant feedback during authoring.
+Minter is a CLI that parses `.spec` and `.nfr` files — a structured DSL for defining behavioral contracts and non-functional requirements. It validates syntax and semantics, resolves dependency graphs, cross-validates NFR references, and gives you instant feedback while authoring.
+
+The spec format has exactly one primitive: **behavioral specs that depend on other behavioral specs**. There is no type system — data shapes are specs whose behaviors describe what valid instances look like. There is no error catalog — error behavior is expressed directly as behaviors. Everything is given/when/then. One concept to learn, one concept to validate, one concept to generate tests from.
 
 ```
 Human intent --> .spec (DSL) --> minter validate (deterministic) --> downstream agents read .spec
@@ -10,104 +12,108 @@ Human intent --> .spec (DSL) --> minter validate (deterministic) --> downstream 
 
 ## Install
 
-### Homebrew (macOS and Linux)
-
 ```bash
 brew install arnaudlewis/tap/minter
 ```
 
-This installs both `minter` (CLI) and `minter-mcp` (MCP server).
+This installs both `minter` (CLI) and `minter-mcp` (MCP server for AI agents).
 
-### Shell (Linux)
+## Setup MCP for Claude Code
+
+Once installed, add minter to your Claude Code configuration:
 
 ```bash
-curl -fsSL https://github.com/arnaudlewis/minter-releases/releases/latest/download/minter-$(curl -fsSL https://api.github.com/repos/arnaudlewis/minter-releases/releases/latest | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4)-$(uname -m | sed 's/x86_64/x86_64-unknown-linux-gnu/' | sed 's/aarch64/aarch64-unknown-linux-gnu/').tar.gz | tar xz -C /tmp && sudo install /tmp/minter /tmp/minter-mcp /usr/local/bin/
+claude mcp add minter minter-mcp
 ```
 
-Or step by step:
+This gives Claude access to minter's tools: validate, inspect, scaffold, format, graph, and a built-in authoring guide. Claude can then validate specs inline, scaffold new files, and explore your dependency graph without leaving the conversation.
+
+## Getting started
+
+**1. Learn the methodology**
 
 ```bash
-# 1. Pick your architecture
-ARCH=$(uname -m)  # x86_64 or aarch64
-
-# 2. Get the latest version tag
-TAG=$(curl -fsSL https://api.github.com/repos/arnaudlewis/minter-releases/releases/latest | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4)
-
-# 3. Map to Rust target
-case "$ARCH" in
-  x86_64)  TARGET="x86_64-unknown-linux-gnu" ;;
-  aarch64) TARGET="aarch64-unknown-linux-gnu" ;;
-esac
-
-# 4. Download and extract
-curl -fsSL "https://github.com/arnaudlewis/minter-releases/releases/download/${TAG}/minter-${TAG}-${TARGET}.tar.gz" | tar xz -C /tmp
-
-# 5. Install
-sudo install /tmp/minter /tmp/minter-mcp /usr/local/bin/
+minter explain
 ```
 
-### Manual download
+This prints the full spec-driven development reference — what behaviors are, how NFR categories work, cross-reference binding, override rules, and how specs map to tests.
 
-Download the archive for your platform from the [latest release](https://github.com/arnaudlewis/minter-releases/releases/latest), extract it, and place `minter` and `minter-mcp` on your `PATH`.
-
-### Verify
+**2. Explore the file formats**
 
 ```bash
-minter --version
+minter format spec
+minter format nfr
+```
+
+These print the complete grammar for each DSL format. Everything you need to author valid files.
+
+**3. Scaffold your first spec**
+
+```bash
+minter scaffold spec > specs/my-feature.spec
+```
+
+Open the generated file — it's a ready-to-edit template with an example behavior.
+
+**4. Validate it**
+
+```bash
+minter validate specs/my-feature.spec
+```
+
+```
+✓ my-feature v0.1.0 (1 behavior)
+```
+
+**5. Watch for changes**
+
+```bash
+minter watch specs/
+```
+
+Minter re-validates on every save with colored output. Press `Ctrl+C` to stop.
+
+**6. Explore the dependency graph**
+
+```bash
+minter graph specs/
+```
+
+```
+3 specs, 11 behaviors, 2 NFR categories, 5 constraints
+
+checkout v1.0.0 (4 behaviors)
+├── payment v2.1.0 (7 behaviors)
+│   └── user-auth v1.0.0 (3 behaviors)
+└── [nfr] performance v1.0.0 (2 constraints)
+    ├── #api-response-time
+    └── #db-query-time
+```
+
+**All commands**
+
+```bash
+minter --help
 ```
 
 ## Supported platforms
 
-| Platform | Target | Archive |
-|----------|--------|---------|
-| macOS ARM64 (Apple Silicon) | `aarch64-apple-darwin` | `.tar.gz` |
-| macOS x86_64 (Intel) | `x86_64-apple-darwin` | `.tar.gz` |
-| Linux x86_64 | `x86_64-unknown-linux-gnu` | `.tar.gz` |
-| Linux ARM64 | `aarch64-unknown-linux-gnu` | `.tar.gz` |
-| Windows x86_64 | `x86_64-pc-windows-msvc` | `.zip` |
+| Platform | Target |
+|----------|--------|
+| macOS ARM64 (Apple Silicon) | `aarch64-apple-darwin` |
+| macOS x86_64 (Intel) | `x86_64-apple-darwin` |
+| Linux x86_64 | `x86_64-unknown-linux-gnu` |
+| Linux ARM64 | `aarch64-unknown-linux-gnu` |
+| Windows x86_64 | `x86_64-pc-windows-msvc` |
 
-Each archive contains: `minter`, `minter-mcp`, `LICENSE`, and `README.md`.
+<details>
+<summary>Manual download</summary>
 
-SHA-256 checksums are published alongside every release in `SHA256SUMS.txt`.
+Download the archive for your platform from the [latest release](https://github.com/arnaudlewis/minter-releases/releases/latest), extract it, and place `minter` and `minter-mcp` on your `PATH`.
 
-## What's included
+Each archive contains: `minter`, `minter-mcp`, `LICENSE`, and `README.md`. SHA-256 checksums are in `SHA256SUMS.txt`.
 
-| Binary | Description |
-|--------|-------------|
-| `minter` | CLI tool — validate, watch, format, scaffold, inspect, explain, graph |
-| `minter-mcp` | [MCP](https://modelcontextprotocol.io/) server for AI agent and IDE integration |
-
-### MCP configuration
-
-Add to your Claude Desktop, Cursor, or other MCP-compatible tool:
-
-```jsonc
-{
-  "mcpServers": {
-    "minter": {
-      "command": "minter-mcp"
-    }
-  }
-}
-```
-
-## Quick start
-
-```bash
-# Scaffold a spec
-minter scaffold spec > specs/my-feature.spec
-
-# Validate it
-minter validate specs/my-feature.spec
-
-# Watch for changes
-minter watch specs/
-
-# Explore the dependency graph
-minter graph specs/
-```
-
-Run `minter --help` for full command reference.
+</details>
 
 ## License
 
