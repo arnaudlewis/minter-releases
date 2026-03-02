@@ -35,71 +35,92 @@ Tools available to the agent: validate, inspect, scaffold, format, graph, initia
 
 ## Getting started
 
-**1. Learn the methodology**
+### Build specs with your agent
+
+Once the MCP is set up, your agent already knows the methodology, the DSL grammar, and every validation rule. You don't need to learn the format first — just describe what you want to build.
+
+**Learn the methodology:**
+
+> "Read the minter methodology guide and explain spec-driven development to me."
+
+**Initialize a project:**
+
+> "Initialize a minter spec project in this repo."
+
+**Break down a feature into specs:**
+
+> "I want to build a user authentication system with registration, login, and password reset. Help me break this down into behavioral specs."
+
+**Add non-functional requirements:**
+
+> "Create performance and security NFR files for my project. API responses should be under 200ms and all endpoints need authentication."
+
+**Validate and explore:**
+
+> "Validate all specs in my project and show me the dependency graph."
+
+**Extend an existing spec:**
+
+> "Read the user-auth spec and add edge cases for rate limiting and expired tokens."
+
+The agent handles scaffolding, formatting, cross-reference validation, and dependency resolution through the MCP tools. You focus on what the system should do — the agent handles the DSL.
+
+### CLI reference
+
+For hands-on exploration or CI integration, minter exposes everything through the CLI.
+
+**Methodology and format reference:**
 
 ```bash
-minter explain
+minter explain           # Full spec-driven development reference
+minter format fr         # Complete .spec grammar
+minter format nfr        # Complete .nfr grammar
 ```
 
-This prints the full spec-driven development reference — what behaviors are, how NFR categories work, cross-reference binding, override rules, and how specs map to tests.
-
-**2. Explore the file formats**
+**Authoring:**
 
 ```bash
-minter format spec
-minter format nfr
+minter scaffold fr                    # Generate a .spec template
+minter scaffold nfr performance       # Generate an NFR template for a category
 ```
 
-These print the complete grammar for each DSL format. Everything you need to author valid files.
-
-**3. Scaffold your first spec**
+**Validation and inspection:**
 
 ```bash
-minter scaffold spec > specs/my-feature.spec
+minter validate specs/                # Validate all specs in a directory
+minter validate specs/my-feature.spec # Validate a single file
+minter watch specs/                   # Re-validate on every save
+minter inspect specs/my-feature.spec  # Show structured metadata
+minter graph specs/                   # Display dependency graph
 ```
 
-Open the generated file — it's a ready-to-edit template with an example behavior.
+## Example
 
-**4. Validate it**
+The [`examples/`](examples/) directory contains a complete spec project — a task management API with user authentication, CRUD behaviors, and performance NFR bindings.
+
+```
+examples/specs/
+├── user-auth.spec           # 4 behaviors — register, login, security NFR anchors
+├── task-management.spec     # 5 behaviors — depends on user-auth, whole-file performance NFR
+└── nfr/
+    ├── performance.nfr      # 3 constraints — response time, throughput, bounded queries
+    └── security.nfr         # 2 constraints — password hashing, brute-force protection
+```
 
 ```bash
-minter validate specs/my-feature.spec
+minter graph examples/specs/
 ```
 
 ```
-✓ my-feature v0.1.0 (1 behavior)
+task-management v1.0.0 (5 behaviors)
+├── user-auth v1.0.0 (4 behaviors)
+│   └── [nfr] security v1.0.0 (2 constraints)
+│       ├── #brute-force-protection
+│       └── #password-hashing
+└── [nfr] performance v1.0.0 (3 constraints)
 ```
 
-**5. Watch for changes**
-
-```bash
-minter watch specs/
-```
-
-Minter re-validates on every save with colored output. Press `Ctrl+C` to stop.
-
-**6. Explore the dependency graph**
-
-```bash
-minter graph specs/
-```
-
-```
-3 specs, 11 behaviors, 2 NFR categories, 5 constraints
-
-checkout v1.0.0 (4 behaviors)
-├── payment v2.1.0 (7 behaviors)
-│   └── user-auth v1.0.0 (3 behaviors)
-└── [nfr] performance v1.0.0 (2 constraints)
-    ├── #api-response-time
-    └── #db-query-time
-```
-
-**All commands**
-
-```bash
-minter --help
-```
+See [`examples/README.md`](examples/README.md) for the full walkthrough.
 
 ## Supported platforms
 
