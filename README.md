@@ -102,13 +102,36 @@ minter graph specs/                   # Display dependency graph
 minter coverage specs/                          # Coverage report for all specs
 minter coverage specs/ --scan tests/            # Only scan tests/ for tags
 minter coverage specs/ --format json            # Machine-readable JSON output
+minter coverage specs/ --verbose                # Expand all specs individually
 ```
 
 Tag tests with `@minter` comments to link them to spec behaviors:
 
+```
+// @minter:<type> <behavior> [<behavior>...]    — behavioral test
+// @minter:benchmark #<category>#<constraint>   — NFR benchmark
+```
+
+Valid types: `unit`, `integration`, `e2e`, `benchmark`. Tags work in `//` and `#` style comments.
+
 ```typescript
-// @minter:e2e login-with-email login-invalid-password
+// @minter:e2e login-user login-wrong-password
 describe("authentication", () => { /* ... */ });
+
+// @minter:benchmark #performance#api-response-time
+bench("create task latency", () => { /* ... */ });
+```
+
+Fully covered specs collapse to one line; specs with gaps expand to show individual behaviors:
+
+```
+✓ user-auth v1.0.0  4/4 [e2e]
+✗ task-management v1.0.0  3/5
+  create-task ✓ e2e
+  list-tasks ✓ e2e
+  complete-task ✓ e2e
+  create-task-unauthenticated ✗ uncovered
+  complete-nonexistent-task ✗ uncovered
 ```
 
 ## Example

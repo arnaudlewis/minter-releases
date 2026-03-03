@@ -11,6 +11,10 @@ specs/
 └── nfr/
     ├── performance.nfr      # Response time, throughput, and bounded query constraints
     └── security.nfr         # Password hashing and brute-force protection constraints
+tests/
+├── auth.test.ts             # e2e tests for user-auth behaviors
+├── tasks.test.ts            # e2e tests for task-management behaviors
+└── performance.bench.ts     # NFR benchmark tags for performance constraints
 ```
 
 ## Validate
@@ -42,6 +46,29 @@ task-management v1.0.0 (5 behaviors)
 └── [nfr] performance v1.0.0 (3 constraints)
 ```
 
+## Coverage
+
+```bash
+minter coverage examples/specs/ --scan examples/tests/
+```
+
+```
+✓ user-auth v1.0.0  4/4 [e2e]
+✓ task-management v1.0.0  5/5 [e2e]
+
+NFR Coverage
+  ✓ performance#api-response-time [benchmark]
+  ✓ performance#throughput [benchmark]
+  ✓ performance#no-unbounded-queries [derived]
+  ✓ security#password-hashing [derived]
+  ✓ security#brute-force-protection [derived]
+
+Summary: 9/9 behaviors covered (100%)
+  e2e: 9  benchmark: 2
+```
+
+The `@minter` tags in test files link each test to the spec behaviors it covers. Benchmark tags directly target NFR constraints. Derived NFR coverage comes from the spec graph — when a behavior referencing an NFR constraint has tests, that constraint gets indirect coverage.
+
 ## What to notice
 
 - **`user-auth.spec`** — Four behaviors covering happy path (register, login) and error cases (duplicate email, wrong password). Binds security NFR anchors at the behavior level: `security#password-hashing` on register-user, `security#brute-force-protection` on login-wrong-password. The graph expands the individual anchors.
@@ -53,6 +80,8 @@ task-management v1.0.0 (5 behaviors)
 - **`nfr/security.nfr`** — Two constraints: `password-hashing` (rule, critical) and `brute-force-protection` (metric, critical). Referenced via anchors from user-auth behaviors.
 
 - **NFR binding patterns** — The example demonstrates two approaches: whole-file reference (`performance` on task-management, all constraints apply everywhere) vs anchor references (`security#password-hashing` on a specific behavior, precise binding).
+
+- **Coverage tags** — Each test file has `// @minter:e2e <behavior>` tags above test blocks. The benchmark file uses `// @minter:benchmark #<category>#<constraint>` to directly target NFR constraints. Run `minter coverage` to see which behaviors and constraints are covered.
 
 ## Try it yourself
 
