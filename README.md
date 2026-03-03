@@ -31,7 +31,7 @@ claude mcp add minter minter-mcp
 
 The MCP server embeds the spec-driven methodology directly into your AI agent's workflow. It includes a built-in authoring guide that teaches agents how to think in behaviors, structure NFR constraints, and follow the one-primitive philosophy — so every spec an agent writes follows the same rigor as one you'd write yourself.
 
-Tools available to the agent: validate, inspect, scaffold, format, graph, initialize project, and methodology guide.
+Tools available to the agent: validate, inspect, scaffold, format, graph, initialize project, and methodology guide (covering workflow, authoring, smells, NFR design, context management, and coverage tagging).
 
 ## Getting started
 
@@ -72,15 +72,17 @@ For hands-on exploration or CI integration, minter exposes everything through th
 **Methodology and format reference:**
 
 ```bash
-minter explain           # Full spec-driven development reference
-minter format fr         # Complete .spec grammar
-minter format nfr        # Complete .nfr grammar
+minter guide methodology  # Full spec-driven development reference
+minter guide workflow     # Quick workflow phase reference
+minter guide coverage     # How to tag tests for coverage tracking
+minter format spec        # Complete .spec grammar
+minter format nfr         # Complete .nfr grammar
 ```
 
 **Authoring:**
 
 ```bash
-minter scaffold fr                    # Generate a .spec template
+minter scaffold spec                  # Generate a .spec template
 minter scaffold nfr performance       # Generate an NFR template for a category
 ```
 
@@ -92,6 +94,21 @@ minter validate specs/my-feature.spec # Validate a single file
 minter watch specs/                   # Re-validate on every save
 minter inspect specs/my-feature.spec  # Show structured metadata
 minter graph specs/                   # Display dependency graph
+```
+
+**Coverage tracking:**
+
+```bash
+minter coverage specs/                          # Coverage report for all specs
+minter coverage specs/ --scan tests/            # Only scan tests/ for tags
+minter coverage specs/ --format json            # Machine-readable JSON output
+```
+
+Tag tests with `@minter` comments to link them to spec behaviors:
+
+```typescript
+// @minter:e2e login-with-email login-invalid-password
+describe("authentication", () => { /* ... */ });
 ```
 
 ## Example
