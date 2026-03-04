@@ -72,6 +72,7 @@ For hands-on exploration or CI integration, minter exposes everything through th
 **Methodology and format reference:**
 
 ```bash
+minter guide              # List available guide topics
 minter guide methodology  # Full spec-driven development reference
 minter guide workflow     # Quick workflow phase reference
 minter guide coverage     # How to tag tests for coverage tracking
