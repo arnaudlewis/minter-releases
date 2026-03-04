@@ -53,8 +53,9 @@ minter coverage examples/specs/ --scan examples/tests/
 ```
 
 ```
-✓ user-auth v1.0.0  4/4 [e2e]
-✓ task-management v1.0.0  5/5 [e2e]
+Behavior Coverage
+  ✓ user-auth v1.0.0  4/4 [e2e]
+  ✓ task-management v1.0.0  5/5 [e2e]
 
 NFR Coverage
   ✓ performance#api-response-time [benchmark]

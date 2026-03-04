@@ -125,13 +125,15 @@ bench("create task latency", () => { /* ... */ });
 Fully covered specs collapse to one line; specs with gaps expand to show individual behaviors:
 
 ```
-✓ user-auth v1.0.0  4/4 [e2e]
-✗ task-management v1.0.0  3/5
-  create-task ✓ e2e
-  list-tasks ✓ e2e
-  complete-task ✓ e2e
-  create-task-unauthenticated ✗ uncovered
-  complete-nonexistent-task ✗ uncovered
+Behavior Coverage
+  ✓ user-auth v1.0.0  4/4 [e2e]
+
+task-management v1.0.0
+  ✓ create-task [e2e]
+  ✓ list-tasks [e2e]
+  ✓ complete-task [e2e]
+  ✗ create-task-unauthenticated uncovered
+  ✗ complete-nonexistent-task uncovered
 ```
 
 ## Example
